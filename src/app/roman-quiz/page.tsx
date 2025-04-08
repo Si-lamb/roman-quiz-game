@@ -6,19 +6,19 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
 
-// Roman numeral map
-const romanMap: Record<string, number> = {
-  I: 1,
-  V: 5,
-  X: 10,
-  L: 50,
-  C: 100,
-  D: 500,
-  M: 1000,
-};
-
-// Roman to Integer Converter
+// Unused utility function for Roman numeral conversion - commented out for now
+/*
 function romanToInt(s: string): number {
+  const romanMap: Record<string, number> = {
+    I: 1,
+    V: 5,
+    X: 10,
+    L: 50,
+    C: 100,
+    D: 500,
+    M: 1000,
+  };
+
   let total = 0;
   for (let i = 0; i < s.length; i++) {
     const current = romanMap[s[i] as keyof typeof romanMap];
@@ -32,8 +32,9 @@ function romanToInt(s: string): number {
   }
   return total;
 }
+*/
 
-// Random Roman Numeral Generator
+// Function to generate a random Roman numeral along with its corresponding integer value
 function getRandomRoman(): [string, number] {
   const values = [1, 4, 9, 12, 27, 40, 58, 90, 99, 400, 500, 944, 1000];
   const romanValues = [
@@ -55,8 +56,8 @@ function getRandomRoman(): [string, number] {
   return [romanValues[index], values[index]];
 }
 
-// Main Component
 export default function RomanQuizGame() {
+  // Setup state: current question, user's answer, and feedback message
   const [[roman, correct], setQuestion] = useState(getRandomRoman());
   const [userAnswer, setUserAnswer] = useState("");
   const [feedback, setFeedback] = useState("");
