@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
-// Unused utility function for Roman numeral conversion - commented out for now
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 /*
 function romanToInt(s: string): number {
   const romanMap: Record<string, number> = {
@@ -34,75 +34,98 @@ function romanToInt(s: string): number {
 }
 */
 
-// Function to generate a random Roman numeral along with its corresponding integer value
-function getRandomRoman(): [string, number] {
-  const values = [1, 4, 9, 12, 27, 40, 58, 90, 99, 400, 500, 944, 1000];
-  const romanValues = [
-    "I",
-    "IV",
-    "IX",
-    "XII",
-    "XXVII",
-    "XL",
-    "LVIII",
-    "XC",
-    "XCIX",
-    "CD",
-    "D",
-    "CMXLIV",
-    "M",
-  ];
-  const index = Math.floor(Math.random() * values.length);
-  return [romanValues[index], values[index]];
-}
-
 export default function RomanQuizGame() {
-  // Setup state: current question, user's answer, and feedback message
-  const [[roman, correct], setQuestion] = useState(getRandomRoman());
-  const [userAnswer, setUserAnswer] = useState("");
-  const [feedback, setFeedback] = useState("");
+  const romanNumerals = [
+    { roman: "I", value: 1 },
+    { roman: "II", value: 2 },
+    { roman: "III", value: 3 },
+    { roman: "IV", value: 4 },
+    { roman: "V", value: 5 },
+    { roman: "VI", value: 6 },
+    { roman: "VII", value: 7 },
+    { roman: "VIII", value: 8 },
+    { roman: "IX", value: 9 },
+    { roman: "X", value: 10 },
+  ];
 
-  const handleSubmit = () => {
-    if (parseInt(userAnswer) === correct) {
-      setFeedback("✅ Correct!");
-      setTimeout(() => {
-        setQuestion(getRandomRoman());
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [userAnswer, setUserAnswer] = useState("");
+  const [score, setScore] = useState(0);
+  const [feedback, setFeedback] = useState("");
+  const [showResult, setShowResult] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const correctAnswer = romanNumerals[currentQuestion].value;
+    if (parseInt(userAnswer) === correctAnswer) {
+      setScore(score + 1);
+      setFeedback("Correct!");
+    } else {
+      setFeedback(`Wrong! The correct answer is ${correctAnswer}`);
+    }
+
+    setTimeout(() => {
+      if (currentQuestion + 1 < romanNumerals.length) {
+        setCurrentQuestion(currentQuestion + 1);
         setUserAnswer("");
         setFeedback("");
-      }, 1000);
-    } else {
-      setFeedback("❌ Try again!");
-    }
+      } else {
+        setShowResult(true);
+      }
+    }, 1000);
+  };
+
+  const handleRestart = () => {
+    setCurrentQuestion(0);
+    setUserAnswer("");
+    setScore(0);
+    setFeedback("");
+    setShowResult(false);
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-100 to-gray-300 p-4">
+    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100">
       <Card className="w-full max-w-md shadow-xl">
-        <CardContent className="space-y-6 py-8">
-          <h1 className="text-2xl font-bold text-center">
-            🧠 Roman Numeral Quiz
+        <CardContent className="p-6">
+          <h1 className="text-2xl font-bold mb-4 text-center">
+            Roman Numerals Quiz
           </h1>
-          <motion.div
-            initial={{ scale: 0.8 }}
-            animate={{ scale: 1 }}
-            className="text-center text-4xl font-mono"
-          >
-            {roman}
-          </motion.div>
-          <Input
-            type="number"
-            value={userAnswer}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setUserAnswer(e.target.value)
-            }
-            placeholder="Enter the number"
-            className="text-center text-lg"
-          />
-          <Button onClick={handleSubmit} className="w-full">
-            Submit
-          </Button>
-          {feedback && (
-            <div className="text-center text-lg font-semibold">{feedback}</div>
+          {showResult ? (
+            <div className="text-center">
+              <p className="text-xl mb-4">
+                Your Score: {score}/{romanNumerals.length}
+              </p>
+              <Button onClick={handleRestart}>Play Again</Button>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit}>
+              <p className="mb-4 text-lg text-center">
+                What is the value of{" "}
+                <span className="font-semibold">
+                  {romanNumerals[currentQuestion].roman}
+                </span>
+                ?
+              </p>
+              <Input
+                type="number"
+                value={userAnswer}
+                onChange={(e) => setUserAnswer(e.target.value)}
+                placeholder="Enter a number"
+                className="mb-4"
+              />
+              <Button type="submit" className="w-full">
+                Submit
+              </Button>
+              {feedback && (
+                <motion.p
+                  className="mt-4 text-center font-medium"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                >
+                  {feedback}
+                </motion.p>
+              )}
+            </form>
           )}
         </CardContent>
       </Card>
