@@ -6,8 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-/*
+/* eslint-disable @typescript-eslint/no-unused-vars */
 function romanToInt(s: string): number {
   const romanMap: Record<string, number> = {
     I: 1,
@@ -32,7 +31,7 @@ function romanToInt(s: string): number {
   }
   return total;
 }
-*/
+/* eslint-enable @typescript-eslint/no-unused-vars */
 
 export default function RomanQuizGame() {
   const romanNumerals = [
